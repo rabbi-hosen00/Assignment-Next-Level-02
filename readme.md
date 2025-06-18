@@ -1,88 +1,55 @@
-1️⃣ What are the LIMIT and OFFSET clauses used for?
-LIMIT and OFFSET are used to control the number of rows returned by a SQL query.
 
-LIMIT specifies how many rows you want to return.
+১.PostgreSQL কী?
+PostgreSQL হলো একটি ওপেন-সোর্স রিলেশনাল ডাটাবেস ম্যানেজমেন্ট সিস্টেম (RDBMS)। এটি ডাটা সংরক্ষণ, পরিচালনা এবং বিশ্লেষণের জন্য ব্যবহৃত হয়। PostgreSQL অত্যন্ত শক্তিশালী SQL সাপোর্ট করে এবং ডাটা কনসিস্টেন্সি (সামঞ্জস্যতা) বজায় রাখে। এটি ACID কমপ্লায়েন্ট এবং একাধিক ইউজারের জন্য নিরাপদভাবে ডাটাবেস পরিচালনার সুযোগ দেয়।
 
-OFFSET tells the database to skip a specific number of rows before starting to return results.
+🔹 উদাহরণ: অনলাইন স্টোরের প্রোডাক্ট ও অর্ডারের ডাটা PostgreSQL ডাটাবেসে সংরক্ষণ করা যায়।
 
-🔹 Example:
+২. PostgreSQL-এ ডাটাবেস স্কিমার উদ্দেশ্য কী?
+Schema হলো ডাটাবেসের একটি লজিক্যাল অংশ যা টেবিল, ভিউ, ফাংশন, ইনডেক্স প্রভৃতি অবজেক্টের সংগঠিত সংগ্রহ। স্কিমার মাধ্যমে একক ডাটাবেসকে আলাদা আলাদা ভাগে ভাগ করা যায় যাতে বিভিন্ন মডিউল বা টিম তাদের আলাদা অংশে কাজ করতে পারে।
+
+🔹 উদাহরণ: sales এবং hr নামে দুইটি স্কিমা তৈরি করে বিক্রয় ও মানবসম্পদ বিভাগের ডাটা আলাদাভাবে সংরক্ষণ করা যায়।
+
+৩️.PostgreSQL-এ Primary Key এবং Foreign Key কী?
+✅ Primary Key: টেবিলের এমন একটি কলাম বা কলামের সমন্বয় যা প্রতিটি রেকর্ডকে ইউনিকভাবে চিহ্নিত করে। এটি খালি (NULL) হতে পারে না।
+
+✅ Foreign Key: একটি টেবিলের কলাম যা অন্য টেবিলের Primary Key-কে রেফার করে। এটি টেবিলগুলোর মধ্যে সম্পর্ক তৈরি করে এবং ডাটা ইন্টিগ্রিটি নিশ্চিত করে।
+
+🔹 উদাহরণ:
+
 sql
-Copy code
-SELECT * FROM sightings
-LIMIT 10 OFFSET 5;
-👉 This query returns 10 rows, starting after skipping the first 5.
+Copy
+Edit
+CREATE TABLE departments (
+    department_id SERIAL PRIMARY KEY,
+    department_name VARCHAR(50)
+);
 
-2️⃣ How can you modify data using UPDATE statements?
-The UPDATE statement is used to change existing records in a table.
+CREATE TABLE employees (
+    employee_id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    department_id INT,
+    FOREIGN KEY (department_id) REFERENCES departments(department_id)
+);
+এখানে employees টেবিলের department_id একটি Foreign Key, যা departments টেবিলের department_id কে রেফার করছে।
 
-🔹 Syntax:
+৪️.VARCHAR এবং CHAR ডেটা টাইপের মধ্যে পার্থক্য কী?
+✅ VARCHAR(n): ভ্যারিয়েবল-লেন্থ স্ট্রিং, অর্থাৎ যতটুকু দরকার ততটুকুই জায়গা ব্যবহার করে। সর্বোচ্চ দৈর্ঘ্য n পর্যন্ত হতে পারে।
+
+✅ CHAR(n): ফিক্সড-লেন্থ স্ট্রিং। যদি ৫ অক্ষরের ডেটা রাখি তবে বাকিটা স্পেস দিয়ে পূর্ণ হবে, যতক্ষণ না পর্যন্ত n পূরণ হয়।
+
+🔹 পার্থক্য:
+
+VARCHAR বেশি ফ্লেক্সিবল এবং স্টোরেজ সাশ্রয়ী।
+
+CHAR ফিক্সড-লেন্থ প্রয়োজনে যেমন কোড বা ID-র জন্য ভালো।
+
+৫️. SELECT স্টেটমেন্টে WHERE ক্লজের উদ্দেশ্য কী?
+WHERE ক্লজ ব্যবহার করে শর্ত অনুযায়ী ডাটা ফিল্টার করা হয়। অর্থাৎ, কোন রেকর্ডগুলো কোয়েরিতে দেখা হবে তা নির্ধারণ করা যায়।
+
+🔹 উদাহরণ:
+
 sql
-Copy code
-UPDATE table_name
-SET column1 = value1, column2 = value2, ...
-WHERE condition;
-🔹 Example:
-sql
-Copy code
-UPDATE rangers
-SET region = 'Eastern Zone'
-WHERE ranger_id = 3;
-👉 This updates the region field to "Eastern Zone" for the ranger with ID 3.
-
-⚠️ Note: Always use WHERE to avoid updating all rows by mistake.
-
-3️⃣ What is the significance of the JOIN operation, and how does it work in PostgreSQL?
-JOIN is used to combine rows from two or more tables based on a related column between them.
-
-It allows you to pull related data together for meaningful analysis.
-
-🔹 Common Types of JOINs:
-INNER JOIN: Returns matching rows in both tables.
-
-LEFT JOIN: Returns all rows from the left table, even if there’s no match in the right table.
-
-RIGHT JOIN: Returns all rows from the right table, even if there’s no match in the left.
-
-FULL JOIN: Returns all rows when there is a match in one of the tables.
-
-🔹 Example:
-sql
-Copy code
-SELECT r.name, s.location
-FROM rangers r
-JOIN sightings s ON r.ranger_id = s.ranger_id;
-👉 This retrieves the ranger names and the locations of their sightings.
-
-4️⃣ Explain the GROUP BY clause and its role in aggregation operations.
-GROUP BY is used to group rows that have the same values in specified columns into summary rows.
-
-It is often used with aggregate functions like COUNT(), SUM(), AVG(), etc.
-
-🔹 Example:
-sql
-Copy code
-SELECT ranger_id, COUNT(*) AS total_sightings
-FROM sightings
-GROUP BY ranger_id;
-👉 This groups the sightings by ranger_id and counts how many sightings each ranger made.
-
-5️⃣ How can you calculate aggregate functions like COUNT(), SUM(), and AVG() in PostgreSQL?
-These functions operate on sets of values and return a single value.
-
-🔹 Examples:
-sql
-Copy code
--- Count total sightings
-SELECT COUNT(*) FROM sightings;
-
--- Sum of sightings per ranger
-SELECT ranger_id, COUNT(*) FROM sightings GROUP BY ranger_id;
-
--- Average number of sightings per ranger
-SELECT AVG(total)
-FROM (
-  SELECT COUNT(*) AS total
-  FROM sightings
-  GROUP BY ranger_id
-) AS subquery;
-✅ These are essential for summarizing and analyzing data in your PostgreSQL database.
+Copy
+Edit
+SELECT name FROM employees WHERE salary > 50000;
+👉 এখানে শুধু সেই কর্মচারীদের নাম দেখাবে যাদের বেতন ৫০,০০০ টাকার বেশি।
